@@ -1,11 +1,14 @@
 
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 # help(selenium)
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
 
-from webdriver_manager.core.utils import ChromeType
+
+# from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.core.utils import ChromeType
+from webdriver_manager.firefox import GeckoDriverManager
 
 from bs4 import BeautifulSoup
 
@@ -19,6 +22,7 @@ class catscraper():
         self.offset = offset
         self.jump = jump
         options = Options()
+        
         # options.binary_location = "/home/asher/catscraper/webdriver/chromedriver"
         options.add_argument('lang=en') 
         options.add_argument('--headless') 
@@ -28,11 +32,16 @@ class catscraper():
 
 
         # driver = ChromeDriverManager(path="driver").install()
-        driver = ChromeDriverManager(path="driver",chrome_type=ChromeType.CHROMIUM).install()
+        # driver = ChromeDriverManager(path="driver",chrome_type=ChromeType.CHROMIUM).install()
         # driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
+        driver = GeckoDriverManager(path="driver").install()
+
         #print(driver)
-        self.driver = webdriver.Chrome(driver,options=options)
+        # self.driver = webdriver.Chrome(driver,options=options)
+        self.driver = webdriver.Firefox(driver,options=options)
+
+
         self.max_missed = 30
         #self.driver.get("https://www.google.com/search")
     
