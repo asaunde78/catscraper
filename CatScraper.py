@@ -12,8 +12,10 @@ from bs4 import BeautifulSoup
 import urllib.parse 
 import time
 
+import traceback
+
 class catscraper():
-    def __init__(self,offset,jump):
+    def __init__(self,offset=0,jump=1):
         self.offset = offset
         self.jump = jump
         options = Options()
@@ -32,33 +34,7 @@ class catscraper():
         self.driver = webdriver.Chrome(driver,options=options)
         self.max_missed = 30
         #self.driver.get("https://www.google.com/search")
-    def getsearchhtml(self,search):
-        start = time.time()
-        url = "https://www.google.com/search"
-        #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
-        #search = "cat"
-        params = {
-            "q":search,
-            "tbm": "isch",                # image results
-            "hl": "en",                   # language of the search
-            "gl": "us",                   # country where search comes from
-            "ijn": "0"                    # page number
-        }
-
-        query_string = urllib.parse.urlencode(params)
-
-        print(self.driver.title)
-        print("[INFO] Getting Search HTML")
-        image_urls=[]
-        count = 0
-        missed_count = 0
-        self.driver.get(f"{url}?{query_string}")
-        htmldoc = self.driver.find_element_by_xpath("//body").get_attribute('outerHTML')
-        end = time.time()
-        print(f"Took {end - start} seconds")
-        return htmldoc
-    def close(self):
-        self.driver.quit()
+    
     def find_image_urls(self, search, num):
         start = time.time()
         url = "https://www.google.com/search"
@@ -90,7 +66,7 @@ class catscraper():
                 #find and click image
                 
 
-                imgurl = self.driver.find_element(By.XPATH,'//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'%(str(indx)))
+                imgurl = self.driver.find_element(By.XPATH,'//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'%(str(self.offset + self.jump*indx)))
                 imgurl.click()
                 
                 missed_count = 0
@@ -125,6 +101,7 @@ class catscraper():
                         break
             except Exception as e:
                 print("[INFO] Unable to get link: ", e)
+                print(traceback.format_exc())
 
             try:
                 #scroll page to load next image
@@ -143,12 +120,13 @@ class catscraper():
         print("[INFO] Google search ended")
         end = time.time()
         print(f"Took {end - start} seconds")
+        self.driver.quit()
         return image_urls
     
 
-kitty = catscraper()
+# kitty = catscraper(offset=3, jump=4)
 # print(kitty.getsearchhtml("kitty"))
-print(kitty.find_image_urls("kitty",5))
+# print(kitty.find_image_urls("kitty",5))
 # print(kitty.getimages("kitty",5))
 # print(kitty.find_image_urls("doggy",10))
 # with open("html.txt", "w") as r:
