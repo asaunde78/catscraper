@@ -120,7 +120,7 @@ class catscraper():
         print("[INFO] Google search ended")
         end = time.time()
         print(f"Took {end - start} seconds")
-        self.driver.quit()
+        # self.driver.quit()
         return image_urls
     
 
