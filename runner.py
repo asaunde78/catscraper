@@ -2,7 +2,8 @@ from CatScraper import catscraper
 
 import concurrent.futures
 import time
-
+import subprocess
+subprocess.run(["pkill", "chrome"])
 class scraper():
     def __init__(self, workers=1):
         self.workers = [catscraper(offset=wnum,jump=workers) for wnum in range(workers)]
@@ -66,10 +67,10 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=7)
+    s = scraper(workers=3)
     s.genimages("funny",1)
     b = time.time()
-    images = s.genimages("owen wilson",3)
+    images = s.genimages("owen wilson",4)
     print(images)
     e = time.time()
     print(f"Took {e-b} seconds to generate {len(images)} images")

@@ -61,7 +61,7 @@ class catscraper():
         self.driver.quit()
     def getimages(self,search,num):
         start = time.time()
-        time.sleep(0.10 * (self.offset))
+        # time.sleep((1 * (self.offset)))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
         #search = "cat"
@@ -76,15 +76,17 @@ class catscraper():
         query_string = urllib.parse.urlencode(params)
 
         
-        print(self.driver.title)
+        
 
         print("[INFO] Gathering image links")
         image_urls=[]
     
         self.driver.get(f"{url}?{query_string}")
+        print(self.driver.title)
         # time.sleep(3)
         wait = WebDriverWait(self.driver, 30)
-        wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
+        # wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
         highest_index = self.offset
 
         while len(image_urls) < num:
@@ -112,7 +114,7 @@ class catscraper():
                     #     print("BAD IMAGE WTF")
                     if(("http" in  src_link) and (not "encrypted" in src_link)):
                         print(
-                            f"\t[LINK] \t {src_link}")
+                            f"\t[{self.offset}LINK] \t {src_link}")
                         image_urls.append(src_link)
                         if len(image_urls) >= num:
                             return image_urls
