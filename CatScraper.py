@@ -2,13 +2,13 @@
 from selenium import webdriver
 # help(selenium)
 from selenium.webdriver.common.by import By
-# from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.firefox.options import Options
 
 
-# from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
 # from webdriver_manager.core.utils import ChromeType
-from webdriver_manager.firefox import GeckoDriverManager
+# from webdriver_manager.firefox import GeckoDriverManager
 
 from bs4 import BeautifulSoup
 
@@ -35,11 +35,15 @@ class catscraper():
         # driver = ChromeDriverManager(path="driver",chrome_type=ChromeType.CHROMIUM).install()
         # driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
-        driver = GeckoDriverManager(path="driver").install()
+        # driver = GeckoDriverManager(path="driver").install()
 
         #print(driver)
-        # self.driver = webdriver.Chrome(driver,options=options)
-        self.driver = webdriver.Firefox(driver,options=options)
+        try:
+            self.driver = webdriver.Chrome("/usr/bin/chromedriver",options=options)
+        except Exception: 
+            driver = ChromeDriverManager(path="driver").install()
+            self.driver = webdriver.Chrome(driver,options=options)
+        # self.driver = webdriver.Firefox(driver,options=options)
 
 
         self.max_missed = 30
