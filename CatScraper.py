@@ -27,7 +27,8 @@ class catscraper():
         options.add_argument('--disable-dev-shm-usage')
 
 
-        driver = ChromeDriverManager(path="driver").install()
+        # driver = ChromeDriverManager(path="driver").install()
+        driver = ChromeDriverManager(path="driver",chrome_type=ChromeType.CHROMIUM).install()
         # driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
         #print(driver)
@@ -58,7 +59,7 @@ class catscraper():
         count = 0
         missed_count = 0
         self.driver.get(f"{url}?{query_string}")
-        time.sleep(2)
+        time.sleep(3)
         indx = 1
         while num > count:
             begin = time.time()
@@ -68,7 +69,7 @@ class catscraper():
 
                 imgurl = self.driver.find_element(By.XPATH,'//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'%(str(self.offset + self.jump*indx)))
                 imgurl.click()
-                time.sleep(2)
+                time.sleep(3)
                 missed_count = 0
             except Exception:
                 print("missed")

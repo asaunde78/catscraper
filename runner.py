@@ -27,7 +27,7 @@ class scraper():
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.workercount) as executor:
             w = [(wnum, search, number_of_images) for wnum in range(self.workercount)]
-            print(w)
+            #print(w)
             results = executor.map(self.helper, w)
             for images in results:
                 imagelist.extend(images)
@@ -46,5 +46,5 @@ class scraper():
         
 if __name__ == "__main__":
     s = scraper(workers=7)
-    print(s.genimages("kalista",1))
-    # print(s.genimages("funny monkey",3))
+    s.genimages("funny",1)
+    print(s.genimages("kalista",3))
