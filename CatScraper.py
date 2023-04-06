@@ -55,12 +55,13 @@ class catscraper():
 
 
         self.max_missed = 5
-        #self.driver.get("https://www.google.com/search")
+        self.driver.get("https://www.google.com/search")
+        time.sleep(2)
     def quit(self):
         self.driver.quit()
     def getimages(self,search,num):
         start = time.time()
-        # time.sleep(0.250 * (self.offset))
+        time.sleep(0.10 * (self.offset))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
         #search = "cat"
@@ -91,11 +92,18 @@ class catscraper():
             thumbnails = self.driver.find_elements(By.CLASS_NAME,"bRMDJf")
             print(f"[LENGTH] Thumbnails length for {self.offset}: ", len(thumbnails))
             print(f"{self.offset} starting at {highest_index}")
+            l = list(range(len(thumbnails)))
+            print(f"{self.offset} looking at indexes {l[highest_index:][::self.jump]}")
             thumbnails = thumbnails[highest_index:][::self.jump]
             print(f"{self.offset} has {len(thumbnails)} to look at")
             for ind,nail in enumerate(thumbnails):
+                
+                print(f'{self.offset} found {nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")}')
                 nail.click()
                 class_name = "n3VNCb"
+                wait = WebDriverWait(self.driver, 30)
+                wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+                
                 images = self.driver.find_elements(By.CLASS_NAME, class_name)
                 for image in images:
                     src_link = image.get_attribute("src")
@@ -104,14 +112,15 @@ class catscraper():
                     #     print("BAD IMAGE WTF")
                     if(("http" in  src_link) and (not "encrypted" in src_link)):
                         print(
-                            f"[LINK] \t {src_link}")
+                            f"\t[LINK] \t {src_link}")
                         image_urls.append(src_link)
                         if len(image_urls) >= num:
                             return image_urls
-                highest_index = highest_index + self.jump*ind
+                highest_index = highest_index + self.jump#*ind
                 print(f"new highest index for {self.offset} is {highest_index}")
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             print(f"{self.offset} is scrolling")
+            time.sleep(5)
         # print("reached end :/")
         return image_urls
     def find_image_urls(self, search, num):
@@ -220,8 +229,13 @@ class catscraper():
         return image_urls
     
 if __name__ == "__main__":
-    c = catscraper()
-    c.getimages("dog",3)
+    # c = catscraper(offset=1,jump=2)
+    c = catscraper(offset=1,jump=2)
+    b = time.time()
+    images = c.getimages("owen wilson",1)
+    print(images)
+    e = time.time()
+    print(f"Took {e-b} seconds to generate {len(images)} images")
     c.quit()
 
 
