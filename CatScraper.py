@@ -58,7 +58,7 @@ class catscraper():
         count = 0
         missed_count = 0
         self.driver.get(f"{url}?{query_string}")
-        #time.sleep(1)
+        time.sleep(2)
         indx = 1
         while num > count:
             begin = time.time()
@@ -68,7 +68,7 @@ class catscraper():
 
                 imgurl = self.driver.find_element(By.XPATH,'//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'%(str(self.offset + self.jump*indx)))
                 imgurl.click()
-                
+                time.sleep(2)
                 missed_count = 0
             except Exception:
                 print("missed")
@@ -124,21 +124,5 @@ class catscraper():
         return image_urls
     
 
-# kitty = catscraper(offset=3, jump=4)
-# print(kitty.getsearchhtml("kitty"))
-# print(kitty.find_image_urls("kitty",5))
-# print(kitty.getimages("kitty",5))
-# print(kitty.find_image_urls("doggy",10))
-# with open("html.txt", "w") as r:
-#     htmldoc = kitty.getsearchhtml("kitty")
-#     soup = BeautifulSoup(htmldoc,"lxml")
-#     images = soup.find_all("img", class_="n3VNCb")
-#     images = "\n".join([source for source in images])
-#     r.write(images)
 
-# with open("html.txt", "w") as r:
-#     r.write(kitty.getsearchhtml("funny"))
-
-# with open("html.txt", "w") as r:
-#     r.write(kitty.getsearchhtml("monkey"))
 
