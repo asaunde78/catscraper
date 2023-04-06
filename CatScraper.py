@@ -54,7 +54,7 @@ class catscraper():
         # self.driver = webdriver.Firefox(driver,options=options)
 
 
-        self.max_missed = 5
+        self.tries = 5
         self.driver.get("https://www.google.com/search")
         time.sleep(2)
     def quit(self):
@@ -75,18 +75,16 @@ class catscraper():
 
         query_string = urllib.parse.urlencode(params)
 
-        
-        
-
         print("[INFO] Gathering image links")
         image_urls=[]
-    
+        
         self.driver.get(f"{url}?{query_string}")
         print(self.driver.title)
         # time.sleep(3)
-        wait = WebDriverWait(self.driver, 30)
+        wait = WebDriverWait(self.driver, 2)
         # wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
         wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
+    
         highest_index = self.offset
 
         while len(image_urls) < num:
@@ -98,13 +96,32 @@ class catscraper():
             print(f"{self.offset} looking at indexes {l[highest_index:][::self.jump]}")
             thumbnails = thumbnails[highest_index:][::self.jump]
             print(f"{self.offset} has {len(thumbnails)} to look at")
-            for ind,nail in enumerate(thumbnails):
+            for nail in thumbnails:
+                name = nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")
+                # print(f'{self.offset} found {name}')
                 
-                print(f'{self.offset} found {nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")}')
-                nail.click()
-                class_name = "n3VNCb"
-                wait = WebDriverWait(self.driver, 30)
-                wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+                tries = 0
+                while tries < self.tries:
+                    try:
+                
+                        #print(f"{self.offset}'s element's img alt: {name}", nail.is_displayed())
+
+                        # wait = WebDriverWait(self.driver, 3)
+                        # wait.until(EC.element_to_be_clickable((By.XPATH,nail.get_attibute("xpath"))))
+                        
+                        nail.click()
+                        class_name = "n3VNCb"
+                        wait = WebDriverWait(self.driver, 3)
+                        wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+                        break
+                    except Exception as e:
+                        print("[ERROR] failed to click: ", e)
+                        tries +=1
+                        if tries == self.tries:
+                            print("[ERROR] RAN OUT OF TRIES :/")
+                            return image_urls
+                            
+                            
                 
                 images = self.driver.find_elements(By.CLASS_NAME, class_name)
                 for image in images:
@@ -125,110 +142,7 @@ class catscraper():
             time.sleep(5)
         # print("reached end :/")
         return image_urls
-    def find_image_urls(self, search, num):
-        
-        start = time.time()
-        time.sleep(0.250 * (self.offset))
-        url = "https://www.google.com/search"
-        #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
-        #search = "cat"
-        params = {
-            "q":search,
-            "tbm": "isch",                # image results
-            "hl": "en",                   # language of the search
-            "gl": "us",                   # country where search comes from
-            "ijn": "0"                    # page number
-        }
 
-        query_string = urllib.parse.urlencode(params)
-
-        
-        print(self.driver.title)
-
-        print("[INFO] Gathering image links")
-        image_urls=[]
-        count = 0
-        missed_count = 0
-        self.driver.get(f"{url}?{query_string}")
-        # time.sleep(3)
-        wait = WebDriverWait(self.driver, 30)
-        wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
-
-        indx = 1
-        print("ELEMENTS: ",len(self.driver.find_elements(By.CLASS_NAME,"bRMDJf")))
-        while num > count:
-            # time.sleep(1)
-            begin = time.time()
-            divindx = self.offset + self.jump*indx
-            print(f"[divindx]: {divindx}")
-            try:
-                #find and click image
-                
-                imgurl = self.driver.find_element(By.XPATH,'//*[@id="islrg"]/div[1]/div[%s]/a[1]/div[1]/img'%(str(divindx)))
-                
-                # print(f"Worker:{self.offset} [IMGURL]: {imgurl}")
-                # self.driver.execute_script("arguments[0].scrollIntoView(true);", imgurl)
-                # time.sleep(1)
-                imgurl.click()
-                # time.sleep(1)
-                wait = WebDriverWait(self.driver, 30)
-                wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
-
-                missed_count = 0
-            except Exception as e :
-                # time.sleep(1)
-                print("[ERROR] missed",e)
-                missed_count = missed_count + 1
-                if (missed_count>self.max_missed):
-                    print("[INFO] Maximum missed photos reached, exiting...")
-                    break
-
-            try:
-                
-                class_name = "n3VNCb"
-                images = self.driver.find_elements(By.CLASS_NAME, class_name)
-            
-                for image in images:
-
-                    src_link = image.get_attribute("src")
-                    # print(src_link)
-                    # if(not("http" in  src_link) or not(not "encrypted" in src_link)):
-                    #     print("BAD IMAGE WTF")
-                    if(("http" in  src_link) and (not "encrypted" in src_link)):
-                        print(
-                            f"[INFO] {search} \t #{count} \t absolute: {self.offset + self.jump*indx} \t {src_link}")
-                        image_urls.append(src_link)
-                        count +=1
-                        ending = time.time()
-                        print(f"clicking took {ending-begin}")
-                        break
-            except Exception as e:
-                # time.sleep(1)
-                print(f"[ERROR] Unable to get link: ", e)
-                print(traceback.format_exc())
-            
-            try:
-                #scroll page to load next image
-                if(count%3==0):
-                    self.driver.execute_script("window.scrollTo(0, "+str((divindx)*60)+");")
-                element = self.driver.find_element(By.CLASS_NAME,"mye4qd")
-                element.click()
-                print("[INFO] Loading next page")
-                # time.sleep(3)
-                wait = WebDriverWait(self.driver, 30)
-                wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
-            except Exception:
-                time.sleep(1)
-            indx += 1
-            
-
-
-        # self.driver.quit()
-        print("[INFO] Google search ended")
-        end = time.time()
-        print(f"Took {end - start} seconds")
-        # self.driver.quit()
-        return image_urls
     
 if __name__ == "__main__":
     # c = catscraper(offset=1,jump=2)

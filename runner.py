@@ -53,21 +53,13 @@ class scraper():
             results = executor.map(self.helper, w)
             for images in results:
                 imagelist.extend(images)
-        #     for worker in w:
-        #         future = executor.submit(self.worker_thread,worker)
-        #         futures.append(future)
-
-        # for future in futures:
-        #     images = future.result()
-        #     imagelist.extend(images)
-
-
+    
         finish = time.time()
         print(f"Took {finish-start} seconds")
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=3)
+    s = scraper(workers=8)
     s.genimages("funny",1)
     b = time.time()
     images = s.genimages("owen wilson",4)
