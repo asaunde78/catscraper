@@ -136,9 +136,9 @@ class catscraper():
                         # wait.until(EC.element_to_be_clickable((By.XPATH,nailxpath)))
                         # self.driver.implicitly_wait(0.5)
                         # time.sleep(3)
-                        # nail.click()
-                        thumb = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, nailxpath)))
-                        thumb.click()
+                        nail.click()
+                        # thumb = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, nailxpath)))
+                        # thumb.click()
                         # self.actions.move_to_element(nail).click().perform()
 
                         # self.driver.execute_script("document.evaluate(arguments[0],document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click()",nailxpath)
