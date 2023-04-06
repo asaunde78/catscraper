@@ -172,7 +172,7 @@ class catscraper():
                     # print(src_link)
                     # if(not("http" in  src_link) or not(not "encrypted" in src_link)):
                     #     print("BAD IMAGE WTF")
-                    if(("http" in  src_link) and (not "encrypted" in src_link)):
+                    if((src_link.startswith("http")) and (not "encrypted" in src_link)):
                         print(
                             f"\t[{self.offset}LINK] \t {src_link}")
                         image_urls.append(src_link)

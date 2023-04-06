@@ -3,9 +3,10 @@ from CatScraper import catscraper
 import concurrent.futures
 import time
 import subprocess
-subprocess.run(["pkill", "chrome"])
+# subprocess.run(["pkill", "chrome"])
 class scraper():
     def __init__(self, workers=1):
+        subprocess.run(["pkill", "chrome"])
         self.workers = [catscraper(offset=wnum,jump=workers) for wnum in range(workers)]
         self.workercount = len(self.workers)
         pass
