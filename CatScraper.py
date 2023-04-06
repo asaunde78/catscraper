@@ -120,8 +120,8 @@ class catscraper():
             for nail in thumbnails:
                 name = nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")
                 
-                nailxpath =  self.generateXPATH(nail, "")
-                print("xpath",nailxpath)
+                # nailxpath =  self.generateXPATH(nail, "")
+                # print("xpath",nailxpath)
                 # print(f'{self.offset} found {name}')
                 # print(f"{self.offset}'s element's path: {name}",nailxpath)
                 
