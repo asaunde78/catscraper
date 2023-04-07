@@ -112,13 +112,13 @@ class catscraper():
             # l = list(range(len(thumbnails)))
             # print(f"{self.offset} looking at indexes {l[highest_index:][::self.jump]}")
             thumbnails = thumbnails[highest_index:][::]
-            if(len(thumbnails) > 0):
-                print(f"[LENGTH] Thumbnails length for {self.offset}: ", len(thumbnails))
-                print(f"{self.offset} starting at {highest_index}")
-                print(f"{self.offset} has {len(thumbnails)} to look at")
+            # if(len(thumbnails) > 0):
+            #     print(f"[LENGTH] Thumbnails length for {self.offset}: ", len(thumbnails))
+            #     print(f"{self.offset} starting at {highest_index}")
+            #     print(f"{self.offset} has {len(thumbnails)} to look at")
 
             for nail in thumbnails:
-                name = nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")
+                # name = nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")
                 
                 # nailxpath =  self.generateXPATH(nail, "")
                 # print("xpath",nailxpath)
@@ -126,7 +126,7 @@ class catscraper():
                 # print(f"{self.offset}'s element's path: {name}",nailxpath)
                 
                 tries = 0
-                tried_focusing = False
+                # tried_focusing = False
                 while tries < self.tries:
                     try:
                 
@@ -171,7 +171,7 @@ class catscraper():
                     src_link = image.get_attribute("src")
                     # print(src_link)
                     # if(not("http" in  src_link) or not(not "encrypted" in src_link)):
-                    #     print("BAD IMAGE WTF")
+                    #     print("BAD IMAGE WTF") 3FAFAF
                     if((src_link.startswith("http")) and (not "encrypted" in src_link)):
                         print(
                             f"\t[{self.offset}LINK] \t {src_link}")
@@ -179,10 +179,10 @@ class catscraper():
                         if len(image_urls) >= num:
                             return image_urls
                 highest_index += 1#self.jump#*ind
-                print(f"new highest index for {self.offset} is {highest_index}")
+                # print(f"new highest index for {self.offset} is {highest_index}")
             
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            print(f"{self.offset} is scrolling")
+            # print(f"{self.offset} is scrolling")
             # self.driver.implicitly_wait(3)
         # print("reached end :/")
         return image_urls
