@@ -14,7 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from selenium.webdriver import ActionChains
+# from selenium.webdriver import ActionChains
 
 
 import urllib.parse 
@@ -31,12 +31,13 @@ class catscraper():
         # options.binary_location = "/home/asher/catscraper/webdriver/chromedriver"
         options.add_argument('lang=en') 
         
-        options.add_argument('--start-maximized') 
+        # options.add_argument('--start-maximized') 
         options.add_argument('--headless') 
         options.add_argument('--no-sandbox')
         options.add_argument('--single-process')
         options.add_argument('--disable-dev-shm-usage')
-
+        
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_argument('--disable-extensions')
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
@@ -56,9 +57,9 @@ class catscraper():
             self.driver = webdriver.Chrome(driver,options=options)
         # self.driver = webdriver.Firefox(driver,options=options)
 
-        self.actions = ActionChains(self.driver)
+        # self.actions = ActionChains(self.driver)
         self.tries = 1
-        self.driver.get("https://www.google.com/search")
+        # self.driver.get("https://www.google.com/search")
         #time.sleep(2)
     def quit(self):
         self.driver.quit()
@@ -79,7 +80,7 @@ class catscraper():
 
     def getimages(self,search,num):
         start = time.time()
-        # time.sleep((1 * (self.offset)))
+        time.sleep((0.1 * (self.offset)))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
         #search = "cat"
@@ -95,90 +96,64 @@ class catscraper():
 
         print("[INFO] Gathering image links")
         image_urls=[]
+        address = f"{url}?{query_string}"
         
-        self.driver.get(f"{url}?{query_string}")
-        print(self.driver.title)
+        self.driver.get(address)
+        print(f"[{self.offset}] got {address} found {self.driver.title}")
         # time.sleep(3)
-        wait = WebDriverWait(self.driver, 2)
+        wait = WebDriverWait(self.driver, 5)
         # wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
         wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
     
-        highest_index = self.offset*self.jump
+        # highest_index = self.offset*self.jump
+        highest_index = self.offset#
 
         while len(image_urls) < num:
             
             thumbnails = self.driver.find_elements(By.CLASS_NAME,"bRMDJf")
-        
-            # l = list(range(len(thumbnails)))
-            # print(f"{self.offset} looking at indexes {l[highest_index:][::self.jump]}")
-            thumbnails = thumbnails[highest_index:][::]
-            # if(len(thumbnails) > 0):
-            #     print(f"[LENGTH] Thumbnails length for {self.offset}: ", len(thumbnails))
-            #     print(f"{self.offset} starting at {highest_index}")
-            #     print(f"{self.offset} has {len(thumbnails)} to look at")
-
+            thumbnails = thumbnails[highest_index:][::self.jump]
+            # thumbnails = thumbnails[highest_index:][::]
             for nail in thumbnails:
-                # name = nail.find_element(By.CLASS_NAME,"rg_i").get_attribute("alt")
-                
-                # nailxpath =  self.generateXPATH(nail, "")
-                # print("xpath",nailxpath)
-                # print(f'{self.offset} found {name}')
-                # print(f"{self.offset}'s element's path: {name}",nailxpath)
-                
+                class_name = "iPVvYb"#"r48jcc"#"n3VNCb"
                 tries = 0
-                # tried_focusing = False
                 while tries < self.tries:
                     try:
-                
-                        # print(f"{self.offset}'s element's img alt: {name}", nail.is_displayed())
-                        # print(f"{self.offset}'s element's img alt: {name}", nail.is_enabled())
-                        # wait = WebDriverWait(self.driver, 3)
-                        # wait.until(EC.element_to_be_clickable((By.XPATH,nailxpath)))
-                        # self.driver.implicitly_wait(0.5)
-                        # time.sleep(3)
+                        # print("about to click! so excited")
                         nail.click()
-                        # thumb = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, nailxpath)))
-                        # thumb.click()
-                        # self.actions.move_to_element(nail).click().perform()
-
-                        # self.driver.execute_script("document.evaluate(arguments[0],document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click()",nailxpath)
-
-                        # self.driver.execute_script("document.querySelector(arguments[0]).click();", nail.)
-                        class_name = "n3VNCb"
-                        wait = WebDriverWait(self.driver, 3)
-                        wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+                        # print("i clicked! :D ")
+                        # wait = WebDriverWait(self.driver, 3)
+                        # wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
                         break
                     except Exception as e:
-                        # if (not tried_focusing):
-                        #     nailxpath =  self.generateXPATH(nail, "")
-                        #     self.driver.execute_script("document.evaluate(arguments[0],document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.focus()",nailxpath)
-                        #     tried_focusing = True
-                        #     print(f"[{self.offset}FOCUS] Tried focusing" )
-                        #     break
-                        # nailxpath =  self.generateXPATH(nail, "")
-                        # thumb = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, nailxpath)))
-                        # thumb.click()
-                        # print(f"[{self.offset}FAILED] \n\t name: {name} \n\t path: {nailxpath} ")
-                        # self.driver.execute_script("document.evaluate(arguments[0],document,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null).singleNodeValue.click()",nailxpath)
                         print("[ERROR] failed to click: ", e)
                         tries +=1
                         if tries == self.tries:
                             print("[ERROR] RAN OUT OF TRIES :/")
                             return image_urls
-                            
+                try:
+                    waitstart = time.time()
+                    wait = WebDriverWait(self.driver, 15)
+                    wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
+                    waitend = time.time()
+                    print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
+                except Exception as e:
+                    print("[ERROR] couldn't load the element: ",e)
+                    break
                 images = self.driver.find_elements(By.CLASS_NAME, class_name)
+                # print(images)
                 for image in images:
                     src_link = image.get_attribute("src")
                     # print(src_link)
                     # if(not("http" in  src_link) or not(not "encrypted" in src_link)):
                     #     print("BAD IMAGE WTF") 3FAFAF
                     if((src_link.startswith("http")) and (not "encrypted" in src_link)):
-                        print(
-                            f"\t[{self.offset}LINK] \t {src_link}")
                         image_urls.append(src_link)
+                        print(f"\t[{self.offset}LINK] \t {len(image_urls)} \t {src_link}")
                         if len(image_urls) >= num:
                             return image_urls
-                highest_index += 1#self.jump#*ind
+                # nail.click()
+                # highest_index += 1
+                highest_index += self.jump#*ind
                 # print(f"new highest index for {self.offset} is {highest_index}")
             
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -190,7 +165,7 @@ class catscraper():
     
 if __name__ == "__main__":
     # c = catscraper(offset=1,jump=2)
-    c = catscraper(offset=1,jump=8)
+    c = catscraper(offset=0,jump=1)
     b = time.time()
     images = c.getimages("owen wilson",10)
     print(images)
