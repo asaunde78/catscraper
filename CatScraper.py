@@ -36,11 +36,15 @@ class catscraper():
         options.add_argument('--no-sandbox')
         options.add_argument('--single-process')
         options.add_argument('--disable-dev-shm-usage')
-        
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_argument('--disable-extensions')
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        # options.add_argument('--blink-settings=imagesEnabled=false')
+
+        # chrome_options = webdriver.ChromeOptions()
+        # chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+
 
 
         # driver = ChromeDriverManager(path="driver").install()
@@ -89,7 +93,8 @@ class catscraper():
             "tbm": "isch",                # image results
             "hl": "en",                   # language of the search
             "gl": "us",                   # country where search comes from
-            "ijn": "0"                    # page number
+            "ijn": "0",                    # page number
+            "tbs":"isz:l"
         }
 
         query_string = urllib.parse.urlencode(params)
@@ -101,9 +106,13 @@ class catscraper():
         self.driver.get(address)
         print(f"[{self.offset}] got {address} found {self.driver.title}")
         # time.sleep(3)
-        wait = WebDriverWait(self.driver, 5)
-        # wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
+        try:
+            wait = WebDriverWait(self.driver, 3)
+            # wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
+        except:
+            print("didn't work")
+            return []
     
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
@@ -132,7 +141,7 @@ class catscraper():
                             return image_urls
                 try:
                     waitstart = time.time()
-                    wait = WebDriverWait(self.driver, 15)
+                    wait = WebDriverWait(self.driver, 7)
                     wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
                     waitend = time.time()
                     print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
@@ -157,7 +166,7 @@ class catscraper():
                 # print(f"new highest index for {self.offset} is {highest_index}")
             
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            # print(f"{self.offset} is scrolling")
+            print(f"{self.offset} is scrolling")
             # self.driver.implicitly_wait(3)
         # print("reached end :/")
         return image_urls

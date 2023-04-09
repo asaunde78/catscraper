@@ -26,7 +26,7 @@ class scraper():
     def genimages(self,search,number_of_images,divide=False):
         start = time.time()
         imagelist = []
-        futures= []
+        
         # number_of_images = 3
         
 
@@ -60,12 +60,12 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=3)
+    s = scraper(workers=5)
     s.genimages("funny",1)
     b = time.time()
-    images = s.genimages("owen wilson",5)
+    images = s.genimages("owen wilson",6)
     print(images)
     e = time.time()
     print(f"Took {e-b} seconds to generate {len(images)} images")
     print(f"There are {len(set(images))} unique pictures")
-    # s.kill()
+    s.kill()
