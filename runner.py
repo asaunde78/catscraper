@@ -7,6 +7,8 @@ from multiprocessing import Process
 
 import sys,requests
 sys.path.insert(1, '/home/asher/linkdownloadersite')
+# sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
+
 from linkdownloader import downloader
 # subprocess.run(["pkill", "chrome"])
 class scraper():
@@ -86,6 +88,6 @@ if __name__ == "__main__":
     images = s.genimages("overwatch",10)
     print(images)
     e = time.time()
-    print(f"Took {e-b} seconds to generate {len(images)} images")
+    print(f"Took {e-b} seconds to generate and download {len(images)} images")
     print(f"There are {len(set(images))} unique pictures")
     s.kill()
