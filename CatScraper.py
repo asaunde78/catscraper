@@ -69,6 +69,7 @@ class catscraper():
 
         # self.actions = ActionChains(self.driver)
         self.tries = 1
+        self.count = 0
         # self.driver.get("https://www.google.com/search")
         #time.sleep(2)
     def quit(self):
@@ -111,6 +112,7 @@ class catscraper():
         
         self.driver.get(address)
         print(f"[{self.offset}] got {address} found {self.driver.title}")
+        time.sleep(3)
         # time.sleep(3)
         try:
             wait = WebDriverWait(self.driver, 3)
@@ -122,8 +124,8 @@ class catscraper():
     
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
-        count = 0
-        while count < num:
+        
+        while self.count < num:
             
             thumbnails = self.driver.find_elements(By.CLASS_NAME,"bRMDJf")
             thumbnails = thumbnails[highest_index:][::self.jump]
@@ -137,6 +139,7 @@ class catscraper():
                         nail.click()
                         # time.sleep(3)
                         image_urls.append("balls")
+                        time.sleep(3)
                         
                         break
                     except Exception as e:
@@ -149,15 +152,15 @@ class catscraper():
                 waitstart = time.time()
                 wait = WebDriverWait(self.driver, 7)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
-                count += 1
-                if (count == num):
+                self.count += 1
+                if (self.count == num):
                     return image_urls
-                print(count,num,count<num)
+                print(self.count,num,self.count<num)
                 waitend = time.time()
                 print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
                 wait = WebDriverWait(self.driver, 7)
-                wait.until(EC.presence_of_element_located((By.ID, f"link_count{count}")))
-                print(self.driver.find_element(By.ID, f"link_count{count}"))
+                wait.until(EC.presence_of_element_located((By.ID, f"link_count{self.count}")))
+                print(self.driver.find_element(By.ID, f"link_count{self.count}"))
                 highest_index += self.jump#*ind
                 # print(f"new highest index for {self.offset} is {highest_index}")
             
@@ -170,7 +173,7 @@ class catscraper():
     
 if __name__ == "__main__":
     # c = catscraper(offset=1,jump=2)
-    c = catscraper(offset=0,jump=1)
+    c = catscraper(offset=1,jump=2)
     b = time.time()
     images = c.getimages("owen wilson",10)
     print(images)
