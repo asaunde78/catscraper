@@ -60,7 +60,7 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=5)
+    s = scraper(workers=2)
     s.genimages("funny",1)
     b = time.time()
     images = s.genimages("owen wilson",6)

@@ -32,11 +32,17 @@ class catscraper():
         options.add_argument('lang=en') 
         
         # options.add_argument('--start-maximized') 
-        options.add_argument('--headless') 
+        # options.headless = True
+        options.add_argument('--headless=new') 
+        # options.add_argument('--single-process')
+
         options.add_argument('--no-sandbox')
-        options.add_argument('--single-process')
+        options.page_load_strategy = 'none'
+        
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-extensions')
+        # options.add_argument('--disable-extensions')
+        options.add_extension("blockerextension.crx")
+
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -116,22 +122,22 @@ class catscraper():
     
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
-
-        while len(image_urls) < num:
+        count = 0
+        while count < num:
             
             thumbnails = self.driver.find_elements(By.CLASS_NAME,"bRMDJf")
             thumbnails = thumbnails[highest_index:][::self.jump]
             # thumbnails = thumbnails[highest_index:][::]
             for nail in thumbnails:
-                class_name = "iPVvYb"#"r48jcc"#"n3VNCb"
+
                 tries = 0
                 while tries < self.tries:
                     try:
                         # print("about to click! so excited")
                         nail.click()
-                        # print("i clicked! :D ")
-                        # wait = WebDriverWait(self.driver, 3)
-                        # wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
+                        # time.sleep(3)
+                        image_urls.append("balls")
+                        
                         break
                     except Exception as e:
                         print("[ERROR] failed to click: ", e)
@@ -139,29 +145,19 @@ class catscraper():
                         if tries == self.tries:
                             print("[ERROR] RAN OUT OF TRIES :/")
                             return image_urls
-                try:
-                    waitstart = time.time()
-                    wait = WebDriverWait(self.driver, 7)
-                    wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
-                    waitend = time.time()
-                    print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
-                except Exception as e:
-                    print("[ERROR] couldn't load the element: ",e)
-                    break
-                images = self.driver.find_elements(By.CLASS_NAME, class_name)
-                # print(images)
-                for image in images:
-                    src_link = image.get_attribute("src")
-                    # print(src_link)
-                    # if(not("http" in  src_link) or not(not "encrypted" in src_link)):
-                    #     print("BAD IMAGE WTF") 3FAFAF
-                    if((src_link.startswith("http")) and (not "encrypted" in src_link)):
-                        image_urls.append(src_link)
-                        print(f"\t[{self.offset}LINK] \t {len(image_urls)} \t {src_link}")
-                        if len(image_urls) >= num:
-                            return image_urls
-                # nail.click()
-                # highest_index += 1
+                class_name = "f2By0e"
+                waitstart = time.time()
+                wait = WebDriverWait(self.driver, 7)
+                wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
+                count += 1
+                if (count == num):
+                    return image_urls
+                print(count,num,count<num)
+                waitend = time.time()
+                print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
+                wait = WebDriverWait(self.driver, 7)
+                wait.until(EC.presence_of_element_located((By.ID, f"link_count{count}")))
+                print(self.driver.find_element(By.ID, f"link_count{count}"))
                 highest_index += self.jump#*ind
                 # print(f"new highest index for {self.offset} is {highest_index}")
             
