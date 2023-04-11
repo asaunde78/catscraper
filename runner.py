@@ -81,7 +81,7 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=4)
+    s = scraper(workers=2,server=True)
     s.genimages("funny",1)
     time.sleep(2)
     b = time.time()
