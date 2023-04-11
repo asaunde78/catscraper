@@ -46,20 +46,7 @@ class catscraper():
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        # options.add_argument('--blink-settings=imagesEnabled=false')
-
-        # chrome_options = webdriver.ChromeOptions()
-        # chrome_options.add_argument('--blink-settings=imagesEnabled=false')
-
-
-
-        # driver = ChromeDriverManager(path="driver").install()
-        # driver = ChromeDriverManager(path="driver",chrome_type=ChromeType.CHROMIUM).install()
-        # driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
-
-        # driver = GeckoDriverManager(path="driver").install()
-
-        #print(driver)
+        
         try:
             self.driver = webdriver.Chrome("/usr/bin/chromedriver",options=options)
         except Exception: 
@@ -90,7 +77,8 @@ class catscraper():
         return None
 
     def getimages(self,search,num):
-        start = time.time()
+        
+        start = self.count
         time.sleep((0.1 * (self.offset)))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
@@ -112,7 +100,7 @@ class catscraper():
         
         self.driver.get(address)
         print(f"[{self.offset}] got {address} found {self.driver.title}")
-        time.sleep(3)
+        # time.sleep(3)
         # time.sleep(3)
         try:
             wait = WebDriverWait(self.driver, 3)
@@ -125,7 +113,7 @@ class catscraper():
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
         
-        while self.count < num:
+        while self.count < num+start:
             
             thumbnails = self.driver.find_elements(By.CLASS_NAME,"bRMDJf")
             thumbnails = thumbnails[highest_index:][::self.jump]
@@ -139,7 +127,7 @@ class catscraper():
                         nail.click()
                         # time.sleep(3)
                         image_urls.append("balls")
-                        time.sleep(3)
+                        # time.sleep(3)
                         
                         break
                     except Exception as e:
@@ -153,21 +141,15 @@ class catscraper():
                 wait = WebDriverWait(self.driver, 7)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
                 self.count += 1
-                if (self.count == num):
+                if (self.count == num+start):
                     return image_urls
                 print(self.count,num,self.count<num)
                 waitend = time.time()
                 print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
                 wait = WebDriverWait(self.driver, 7)
                 wait.until(EC.presence_of_element_located((By.ID, f"link_count{self.count}")))
-                print(self.driver.find_element(By.ID, f"link_count{self.count}"))
+                # print(self.driver.find_element(By.ID, f"link_count{self.count}"))
                 highest_index += self.jump#*ind
-                # print(f"new highest index for {self.offset} is {highest_index}")
-            
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            print(f"{self.offset} is scrolling")
-            # self.driver.implicitly_wait(3)
-        # print("reached end :/")
         return image_urls
 
     

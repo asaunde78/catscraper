@@ -3,16 +3,31 @@ from CatScraper import catscraper
 import concurrent.futures
 import time
 import subprocess
+from multiprocessing import Process
+
+import sys
+sys.path.insert(1, '/home/asher/linkdownloadersite')
+from linkdownloader import downloader
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     def __init__(self, workers=1):
-        # subprocess.run(["pkill", "chrome"])
+        subprocess.run(["pkill", "chrome"])
+        print("generating workers...")
         self.workers = [catscraper(offset=wnum,jump=workers) for wnum in range(workers)]
         self.workercount = len(self.workers)
-        pass
+        # self.downloader = downloader()
+        # self.downloader.run(port=6969)
+        print("starting downloadserver")
+        self.downloader = downloader()
+        self.downloaderprocess = Process(target=self.downloader.run)
+        self.downloaderprocess.start()
+
     def kill(self):
         for worker in self.workers:
             worker.quit()
+        self.downloaderprocess.terminate()
+        self.downloaderprocess.join()
+
     def helper(self,tup):
         return self.worker_thread(tup[0],tup[1],tup[2])
     def worker_thread(self,workernum,search,number_of_images):
@@ -60,10 +75,10 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=2)
+    s = scraper(workers=3)
     s.genimages("funny",1)
     b = time.time()
-    images = s.genimages("owen wilson",6)
+    images = s.genimages("owen wilson",20)
     print(images)
     e = time.time()
     print(f"Took {e-b} seconds to generate {len(images)} images")
