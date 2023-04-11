@@ -57,6 +57,8 @@ class catscraper():
         # self.actions = ActionChains(self.driver)
         self.tries = 1
         self.count = 0
+        self.driver.get("https://www.google.com")
+        
         # self.driver.get("https://www.google.com/search")
         #time.sleep(2)
     def quit(self):
@@ -77,7 +79,9 @@ class catscraper():
         return None
 
     def getimages(self,search,num):
-        
+        self.driver.add_cookie({"name":"count","value":str(num)})
+        # c = self.driver.get_cookie("count")["value"]
+        print(f"[COOKIE VALUE] {c}")
         start = self.count
         time.sleep((0.1 * (self.offset)))
         url = "https://www.google.com/search"
@@ -102,6 +106,8 @@ class catscraper():
         print(f"[{self.offset}] got {address} found {self.driver.title}")
         # time.sleep(3)
         # time.sleep(3)
+        # self.driver.execute_script(f"document.documentElement.appendChild(Object.assign(document.createElement(\"div\"),{{className: desired_count, id:{num}}} ));")
+
         try:
             wait = WebDriverWait(self.driver, 3)
             # wait.until(EC.presence_of_element_located((By.TAG_NAME, 'body')))
@@ -141,15 +147,18 @@ class catscraper():
                 wait = WebDriverWait(self.driver, 7)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image
                 self.count += 1
-                if (self.count == num+start):
-                    return image_urls
-                print(self.count,num,self.count<num)
+                print(f"[IMAGE] {self.offset} got image {self.count-start}/{num}")
                 waitend = time.time()
                 print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
+                
+                if (self.count-start == num):
+                    return image_urls
                 wait = WebDriverWait(self.driver, 7)
                 wait.until(EC.presence_of_element_located((By.ID, f"link_count{self.count}")))
                 # print(self.driver.find_element(By.ID, f"link_count{self.count}"))
                 highest_index += self.jump#*ind
+        # wait = WebDriverWait(self.driver, 7)
+        # wait.until(EC.presence_of_element_located((By.ID, f"link_countdone")))
         return image_urls
 
     

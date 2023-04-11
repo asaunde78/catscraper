@@ -5,12 +5,12 @@ import time
 import subprocess
 from multiprocessing import Process
 
-import sys,os,shutil
+import sys,requests
 sys.path.insert(1, '/home/asher/linkdownloadersite')
 from linkdownloader import downloader
 # subprocess.run(["pkill", "chrome"])
 class scraper():
-    def __init__(self, workers=1,folder="images"):
+    def __init__(self, workers=1,folder="images",server=False):
         subprocess.run(["pkill", "chrome"])
         self.folder=folder
         print("generating workers...")
@@ -18,41 +18,36 @@ class scraper():
         self.workercount = len(self.workers)
         # self.downloader = downloader()
         # self.downloader.run(port=6969)
-        print("starting downloadserver")
-        self.downloader = downloader()
-        self.downloaderprocess = Process(target=self.downloader.run)
-        self.downloaderprocess.start()
+        self.server=server
+        #UNCOMMENT THIS FOR DOWNLOAD SERVER 
+        if(self.server):
+            print("starting downloadserver")
+            self.downloader = downloader()
+            self.downloaderprocess = Process(target=self.downloader.run)
+            self.downloaderprocess.start()
 
     def kill(self):
+        
         for worker in self.workers:
             worker.quit()
-        self.downloaderprocess.terminate()
-        self.downloaderprocess.join()
+        #UNCOMMENT THIS FOR DOWNLOAD SERVER
+        if(self.server):
+            time.sleep(3)
+            self.downloaderprocess.terminate()
+            self.downloaderprocess.join()
 
     def helper(self,tup):
         return self.worker_thread(tup[0],tup[1],tup[2])
     def worker_thread(self,workernum,search,number_of_images):
-        
         kitty = self.workers[workernum]
-        # print(kitty.__class__)
         images = kitty.getimages(search,number_of_images)
-        #imagelist = imagelist.extend(images)
-        # del kitty
         return images
     def genimages(self,search,number_of_images,divide=False):
         start = time.time()
         imagelist = []
         
         # number_of_images = 3
-        for filename in os.listdir(self.folder):
-            file_path = os.path.join(self.folder, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+        requests.get(f"http://localhost:6969/kill")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.workercount) as executor:
             workers = self.workercount
@@ -84,10 +79,11 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=2)
+    s = scraper(workers=4)
     s.genimages("funny",1)
+    time.sleep(2)
     b = time.time()
-    images = s.genimages("owen wilson",3)
+    images = s.genimages("overwatch",10)
     print(images)
     e = time.time()
     print(f"Took {e-b} seconds to generate {len(images)} images")
