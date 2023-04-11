@@ -155,7 +155,7 @@ class catscraper():
     
 if __name__ == "__main__":
     # c = catscraper(offset=1,jump=2)
-    c = catscraper(offset=1,jump=2)
+    c = catscraper(offset=0,jump=1)
     b = time.time()
     images = c.getimages("owen wilson",10)
     print(images)

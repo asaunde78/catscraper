@@ -5,13 +5,14 @@ import time
 import subprocess
 from multiprocessing import Process
 
-import sys
+import sys,os,shutil
 sys.path.insert(1, '/home/asher/linkdownloadersite')
 from linkdownloader import downloader
 # subprocess.run(["pkill", "chrome"])
 class scraper():
-    def __init__(self, workers=1):
+    def __init__(self, workers=1,folder="images"):
         subprocess.run(["pkill", "chrome"])
+        self.folder=folder
         print("generating workers...")
         self.workers = [catscraper(offset=wnum,jump=workers) for wnum in range(workers)]
         self.workercount = len(self.workers)
@@ -43,7 +44,15 @@ class scraper():
         imagelist = []
         
         # number_of_images = 3
-        
+        for filename in os.listdir(self.folder):
+            file_path = os.path.join(self.folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.workercount) as executor:
             workers = self.workercount
@@ -75,10 +84,10 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=3)
+    s = scraper(workers=2)
     s.genimages("funny",1)
     b = time.time()
-    images = s.genimages("owen wilson",20)
+    images = s.genimages("owen wilson",3)
     print(images)
     e = time.time()
     print(f"Took {e-b} seconds to generate {len(images)} images")
