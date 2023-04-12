@@ -36,7 +36,7 @@ class catscraper():
         options.add_argument('--headless=new') 
         # options.add_argument('--single-process')
 
-        options.add_argument('--no-sandbox')
+        # options.add_argument('--no-sandbox')
         options.page_load_strategy = 'none'
         
         options.add_argument('--disable-dev-shm-usage')
@@ -56,7 +56,7 @@ class catscraper():
 
         # self.actions = ActionChains(self.driver)
         self.tries = 1
-        self.driver.get("https://www.google.com")
+        # self.driver.get("https://www.google.com")
         
         # self.driver.get("https://www.google.com/search")
         #time.sleep(2)
@@ -78,11 +78,11 @@ class catscraper():
         return None
 
     def getimages(self,search,num):
-        self.driver.add_cookie({"name":"count","value":str(num)})
+        
         # c = self.driver.get_cookie("count")["value"]
         # print(f"[COOKIE VALUE] {c}")
         
-        time.sleep((0.1 * (self.offset)))
+        time.sleep((0.4 * (self.offset)))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
         #search = "cat"
@@ -92,17 +92,17 @@ class catscraper():
             "hl": "en",                   # language of the search
             "gl": "us",                   # country where search comes from
             "ijn": "0",                    # page number
-            "tbs":"isz:l"
         }
 
         query_string = urllib.parse.urlencode(params)
 
         print("[INFO] Gathering image links")
-        image_urls=[]
+        
         address = f"{url}?{query_string}"
         
         self.driver.get(address)
         print(f"[{self.offset}] got {address} found {self.driver.title}")
+        self.driver.add_cookie({"name":"count","value":str(num)})
         # time.sleep(3)
         # time.sleep(3)
         # self.driver.execute_script(f"document.documentElement.appendChild(Object.assign(document.createElement(\"div\"),{{className: desired_count, id:{num}}} ));")
@@ -118,7 +118,7 @@ class catscraper():
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
         count = 0
-        while count < num:
+        while len(self.driver.find_elements(By.ID, f"DONE")) == 0:
             
             thumbnails = self.driver.find_elements(By.CLASS_NAME,"bRMDJf")
             thumbnails = thumbnails[highest_index:][::self.jump]
@@ -130,37 +130,45 @@ class catscraper():
                     try:
                         # print("about to click! so excited")
                         nail.click()
-                        # time.sleep(3)
-                        image_urls.append("balls")
-                        # time.sleep(3)
+                        # time.sleep(1)
                         
                         break
                     except Exception as e:
-                        print("[ERROR] failed to click: ", e)
+                        print(f"[{self.offset}ERROR] failed to click: ", e)
                         tries +=1
                         if tries == self.tries:
                             print("[ERROR] RAN OUT OF TRIES :/")
-                            return image_urls
+                            return [False]
                 class_name = "f2By0e"
                 waitstart = time.time()
                 wait = WebDriverWait(self.driver, 15)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
+                
+                
+
                 count += 1
+                if(len(self.driver.find_elements(By.ID, f"DONE")) > 0):
+                    print(f"[{self.offset}DONE] !!! FOUND A DONE")
+                    return [True]
+                # wait = WebDriverWait(self.driver, 15)
+                # wait.until(EC.presence_of_element_located((By.ID, f"link_count{count}")))
+                # print(self.driver.find_element(By.ID, f"link_count{count}"))
+
+                
                 print(f"[IMAGE] {self.offset} got image {count}/{num}")
                 waitend = time.time()
                 print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
                 
-                if (count== num):
-                    wait = WebDriverWait(self.driver, 9999)
-                    wait.until(EC.presence_of_element_located((By.ID, f"DONE")))
-                    return image_urls
-                # wait = WebDriverWait(self.driver, 7)
-                # wait.until(EC.presence_of_element_located((By.ID, f"link_count{count}")))
-                # print(self.driver.find_element(By.ID, f"link_count{self.count}"))
+                
+                # if (count== num):
+                #     wait = WebDriverWait(self.driver, 9999)
+                #     wait.until(EC.presence_of_element_located((By.ID, f"DONE")))
+                    
+                
                 highest_index += self.jump#*ind
         # wait = WebDriverWait(self.driver, 7)
         # wait.until(EC.presence_of_element_located((By.ID, f"link_countdone")))
-        return image_urls
+        return [False]
 
     
 if __name__ == "__main__":
