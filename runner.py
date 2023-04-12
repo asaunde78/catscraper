@@ -6,15 +6,15 @@ import subprocess
 from multiprocessing import Process
 
 import sys,requests
-# sys.path.insert(1, '/home/asher/linkdownloadersite')
-sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
+sys.path.insert(1, '/home/asher/linkdownloadersite')
+# sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
 from linkdownloader import downloader
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     
     def __init__(self, workers=1,folder="images",server=False):
-        # subprocess.run(["pkill", "chrome"])
+        subprocess.run(["pkill", "chrome"])
         self.folder=folder
         print("generating workers...")
         self.workers = [catscraper(offset=wnum,jump=workers) for wnum in range(workers)]
@@ -79,10 +79,11 @@ class scraper():
     
         finish = time.time()
         print(f"Took {finish-start} seconds")
+        time.sleep(1)
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=2,server=False)
+    s = scraper(workers=2,server=True)
     # print(s.genimages("funny monkey",1))
     s.genimages("funny monkey",1)
     # time.sleep(2)
@@ -91,4 +92,5 @@ if __name__ == "__main__":
     print(workoutputs)
     e = time.time()
     print(f"Took {e-b} seconds to generate and download the images")
+    workoutputs = s.genimages("funny minions",1)
     s.kill()
