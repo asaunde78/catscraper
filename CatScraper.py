@@ -93,7 +93,7 @@ class catscraper():
             "gl": "us",                   # country where search comes from
             "ijn": "0",                    # page number
         }
-
+        
         query_string = urllib.parse.urlencode(params)
 
         print("[INFO] Gathering image links")
