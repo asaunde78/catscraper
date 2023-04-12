@@ -20,7 +20,6 @@ from selenium.webdriver.support import expected_conditions as EC
 import urllib.parse 
 import time
 
-import traceback
 
 class catscraper():
     def __init__(self,offset=0,jump=1):
@@ -41,7 +40,7 @@ class catscraper():
         
         options.add_argument('--disable-dev-shm-usage')
         # options.add_argument('--disable-extensions')
-        options.add_extension("blockerextension.crx")
+        options.add_extension("/home/asher/catscraper/blockerextension.crx")
 
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
@@ -77,7 +76,7 @@ class catscraper():
                 return self.generateXPATH(parentElement, "/"+childTag + "[" + str(c) + "]" + current)
         return None
 
-    def getimages(self,search,num):
+    def getimages(self,search,num,filetype=None):
         
         # c = self.driver.get_cookie("count")["value"]
         # print(f"[COOKIE VALUE] {c}")
@@ -93,6 +92,9 @@ class catscraper():
             "gl": "us",                   # country where search comes from
             "ijn": "0",                    # page number
         }
+        if(filetype):
+            params["tbs"] = f"ift:{filetype}"#add for only png
+        print(params)
         
         query_string = urllib.parse.urlencode(params)
 
@@ -140,7 +142,7 @@ class catscraper():
                             print("[ERROR] RAN OUT OF TRIES :/")
                             return [False]
                 class_name = "f2By0e"
-                waitstart = time.time()
+                # waitstart = time.time()
                 wait = WebDriverWait(self.driver, 15)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
                 
@@ -156,8 +158,8 @@ class catscraper():
 
                 
                 print(f"[IMAGE] {self.offset} got image {count}/{num}")
-                waitend = time.time()
-                print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
+                # waitend = time.time()
+                # print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
                 
                 
                 # if (count== num):

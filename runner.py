@@ -7,6 +7,7 @@ from multiprocessing import Process
 
 import sys,requests
 sys.path.insert(1, '/home/asher/linkdownloadersite')
+sys.path.insert(1, '/home/asher/catscraper/blockerextension.crx')
 # sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
 from linkdownloader import downloader
@@ -25,7 +26,7 @@ class scraper():
         #UNCOMMENT THIS FOR DOWNLOAD SERVER 
         if(self.server):
             print("starting downloadserver")
-            self.downloader = downloader()
+            self.downloader = downloader(folder=self.folder)
             self.downloaderprocess = Process(target=self.downloader.run)
             self.downloaderprocess.start()
 
@@ -40,12 +41,12 @@ class scraper():
             self.downloaderprocess.join()
 
     def helper(self,tup):
-        return self.worker_thread(tup[0],tup[1],tup[2])
-    def worker_thread(self,workernum,search,number_of_images):
+        return self.worker_thread(tup[0],tup[1],tup[2],tup[3])
+    def worker_thread(self,workernum,search,number_of_images,filetype):
         kitty = self.workers[workernum]
-        images = kitty.getimages(search,number_of_images)
+        images = kitty.getimages(search,number_of_images,filetype)
         return images
-    def genimages(self,search,number_of_images,divide=False):
+    def genimages(self,search,number_of_images,divide=False,filetype=None):
         start = time.time()
         imagelist = []
         
@@ -57,7 +58,7 @@ class scraper():
             imagenum = number_of_images
 
             if(divide):
-                w = [[wnum, search, 0] for wnum in range(self.workercount)]
+                w = [[wnum, search, 0,filetype] for wnum in range(self.workercount)]
                 for x in range(workers):
                     main = imagenum//workers
                     if main < imagenum:
@@ -70,7 +71,7 @@ class scraper():
                 print(w)
                 w = [tuple(a)for a in w]
             else:
-                w = [(wnum, search, number_of_images) for wnum in range(self.workercount)]
+                w = [(wnum, search, number_of_images,filetype) for wnum in range(self.workercount)]
 
             #print(w)
             results = executor.map(self.helper, w)
