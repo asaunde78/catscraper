@@ -22,8 +22,7 @@ import time
 
 
 class catscraper():
-    def __init__(self,offset=0,jump=1,headless=True, slower=False):
-        self.slower=slower
+    
     def __init__(self,offset=0,jump=1,headless=True, slower=False):
         self.slower=slower
         self.offset = offset
@@ -38,8 +37,7 @@ class catscraper():
         # options.headless = True
         if(headless):
             options.add_argument('--headless=new') 
-        if(headless):
-            options.add_argument('--headless=new') 
+         
         # options.add_argument('--single-process')
 
         # options.add_argument('--no-sandbox')

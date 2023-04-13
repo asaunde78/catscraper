@@ -16,21 +16,18 @@ from linkdownloader import downloader
 
 sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
-sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     
     def __init__(self, workers=1,folder="images",server=False,fixname=False,headless=True,slower=False):
-    def __init__(self, workers=1,folder="images",server=False,fixname=False,headless=True,slower=False):
+    
         #UNCOMMENT THIS FOR LINUX
         try:
             subprocess.run(["pkill", "chrome"])
         except:
             pass
         self.folder=folder
-        print(f"generating {workers} workers...")
-        self.workers = [catscraper(offset=wnum,jump=workers,headless=headless,slower=slower) for wnum in range(workers)]
         print(f"generating {workers} workers...")
         self.workers = [catscraper(offset=wnum,jump=workers,headless=headless,slower=slower) for wnum in range(workers)]
         self.workercount = len(self.workers)
@@ -103,7 +100,7 @@ if __name__ == "__main__":
     s = scraper(workers=1,server=False,headless=True,slower=False)
     # print(s.genimages("funny monkey",1))
     s.genimages("broken",1)
-    s.genimages("broken",1)
+    
     # time.sleep(2)
     b = time.time()
     workoutputs = s.genimages("broken",20)
