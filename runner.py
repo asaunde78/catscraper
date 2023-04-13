@@ -21,7 +21,10 @@ class scraper():
     
     def __init__(self, workers=1,folder="images",server=False,fixname=False,headless=True,slower=False):
         #UNCOMMENT THIS FOR LINUX
-        subprocess.run(["pkill", "chrome"])
+        try:
+            subprocess.run(["pkill", "chrome"])
+        except:
+            pass
         self.folder=folder
         print(f"generating {workers} workers...")
         self.workers = [catscraper(offset=wnum,jump=workers,headless=headless,slower=slower) for wnum in range(workers)]
@@ -91,13 +94,13 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    # s = scraper(workers=1,server=False,headless=False,slower=True)
     s = scraper(workers=1,server=False,headless=True,slower=False)
+    # s = scraper(workers=1,server=False,headless=True,slower=False)
     # print(s.genimages("funny monkey",1))
     s.genimages("broken",1)
     # time.sleep(2)
     b = time.time()
-    workoutputs = s.genimages("broken",20)
+    workoutputs = s.genimages("bad ass iphone backgrounds",20)
     print(workoutputs)
     e = time.time()
     print(f"Took {e-b} seconds to generate and download the images")

@@ -44,7 +44,7 @@ class catscraper():
         # options.add_argument('--disable-extensions')
         try:
             options.add_extension("/home/asher/catscraper/blockerextension.crx")
-        except:
+        except Exception as e:
             options.add_extension("blockerextension.crx")
 
         options.add_argument('--disable-infobars')
@@ -59,7 +59,7 @@ class catscraper():
         # self.driver = webdriver.Firefox(driver,options=options)
 
         # self.actions = ActionChains(self.driver)
-        self.tries = 1
+        self.tries = 5
         # self.driver.get("https://www.google.com")
         
         # self.driver.get("https://www.google.com/search")
@@ -117,7 +117,7 @@ class catscraper():
             wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
         except:
             print("didn't work")
-            return []
+            return [False]
     
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
@@ -130,26 +130,31 @@ class catscraper():
             for nail in thumbnails:
 
                 tries = 0
-                while tries < self.tries:
-                    try:
-                        # print("about to click! so excited")
-                        nail.click()
-                        if self.slower:
-                            time.sleep(1)
-                        
-                        break
-                    except Exception as e:
-                        print(f"[{self.offset}ERROR] failed to click: ", e)
-                        tries +=1
-                        if tries == self.tries:
-                            print("[ERROR] RAN OUT OF TRIES :/")
-                            return [False]
+                # while tries < self.tries:
+                try:
+                    # print("about to click! so excited")
+                    nail.click()
+                    if self.slower:
+                        time.sleep(1)
+                    
+                    # break
+                except Exception as e:
+                    
+                    print(f"[{self.offset}-ERROR] failed to click: ", e)
+                    tries +=1
+                    if tries == self.tries:
+                        print("[ERROR] RAN OUT OF TRIES :/")
+                        return [False]
+                    continue
                 class_name = "f2By0e"
                 # waitstart = time.time()
-                wait = WebDriverWait(self.driver, 15)
-                wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
-
                 count += 1
+                try:
+                    wait = WebDriverWait(self.driver, 3)
+                    wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
+                except:
+                    continue
+                
                 if(len(self.driver.find_elements(By.ID, f"DONE")) > 0):
                     print(f"[{self.offset}DONE] !!! FOUND A DONE")
                     return [True]
