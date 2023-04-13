@@ -13,17 +13,18 @@ from linkdownloader import downloader
 
 #WINDOWS
 # sys.path.insert(1, '/blockerextension.crx')
-# sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
+
+sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     
-    def __init__(self, workers=1,folder="images",server=False):
+    def __init__(self, workers=1,folder="images",server=False,fixname=False,headless=True,slower=False):
         #UNCOMMENT THIS FOR LINUX
         subprocess.run(["pkill", "chrome"])
         self.folder=folder
-        print("generating workers...")
-        self.workers = [catscraper(offset=wnum,jump=workers) for wnum in range(workers)]
+        print(f"generating {workers} workers...")
+        self.workers = [catscraper(offset=wnum,jump=workers,headless=headless,slower=slower) for wnum in range(workers)]
         self.workercount = len(self.workers)
         # self.downloader = downloader()
         # self.downloader.run(port=6969)
@@ -89,12 +90,13 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=2,server=False)
+    # s = scraper(workers=1,server=False,headless=False,slower=True)
+    s = scraper(workers=1,server=False,headless=True,slower=False)
     # print(s.genimages("funny monkey",1))
-    s.genimages("funny monkey",1)
+    s.genimages("broken",1)
     # time.sleep(2)
     b = time.time()
-    workoutputs = s.genimages("funny doggy",20)
+    workoutputs = s.genimages("broken",20)
     print(workoutputs)
     e = time.time()
     print(f"Took {e-b} seconds to generate and download the images")
