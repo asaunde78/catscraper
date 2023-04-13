@@ -22,7 +22,8 @@ import time
 
 
 class catscraper():
-    def __init__(self,offset=0,jump=1):
+    def __init__(self,offset=0,jump=1,headless=True, slower=False):
+        self.slower=slower
         self.offset = offset
         self.jump = jump
         options = Options()
@@ -30,9 +31,10 @@ class catscraper():
         # options.binary_location = "/home/asher/catscraper/webdriver/chromedriver"
         options.add_argument('lang=en') 
         
-        options.add_argument('--start-maximized') 
+        # options.add_argument('--start-maximized') 
         # options.headless = True
-        options.add_argument('--headless=new') 
+        if(headless):
+            options.add_argument('--headless=new') 
         # options.add_argument('--single-process')
 
         # options.add_argument('--no-sandbox')
@@ -84,7 +86,7 @@ class catscraper():
         # c = self.driver.get_cookie("count")["value"]
         # print(f"[COOKIE VALUE] {c}")
         
-        time.sleep((0.4 * (self.offset)))
+        # time.sleep((0.4 * (self.offset)))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
         #search = "cat"
@@ -132,7 +134,8 @@ class catscraper():
                     try:
                         # print("about to click! so excited")
                         nail.click()
-                        # time.sleep(1)
+                        if self.slower:
+                            time.sleep(1)
                         
                         break
                     except Exception as e:
