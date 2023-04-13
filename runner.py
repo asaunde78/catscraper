@@ -13,12 +13,12 @@ from linkdownloader import downloader
 
 #WINDOWS
 # sys.path.insert(1, '/blockerextension.crx')
-# sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
+sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     
-    def __init__(self, workers=1,folder="images",server=False):
+    def __init__(self, workers=1,folder="images",server=False,fixname=False):
         #UNCOMMENT THIS FOR LINUX
         subprocess.run(["pkill", "chrome"])
         self.folder=folder
@@ -27,11 +27,12 @@ class scraper():
         self.workercount = len(self.workers)
         # self.downloader = downloader()
         # self.downloader.run(port=6969)
+        self.fixname=fixname
         self.server=server
         #UNCOMMENT THIS FOR DOWNLOAD SERVER 
         if(self.server):
             print("starting downloadserver")
-            self.downloader = downloader(folder=self.folder,fixname=False)
+            self.downloader = downloader(folder=self.folder,fixname=self.fixname)
             self.downloaderprocess = Process(target=self.downloader.run)
             self.downloaderprocess.start()
 
@@ -89,12 +90,12 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=2,server=False)
+    s = scraper(workers=1,server=True)
     # print(s.genimages("funny monkey",1))
     s.genimages("funny monkey",1)
     # time.sleep(2)
     b = time.time()
-    workoutputs = s.genimages("funny doggy",20)
+    workoutputs = s.genimages("penis transformation hentai",20)
     print(workoutputs)
     e = time.time()
     print(f"Took {e-b} seconds to generate and download the images")

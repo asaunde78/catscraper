@@ -40,8 +40,10 @@ class catscraper():
         
         options.add_argument('--disable-dev-shm-usage')
         # options.add_argument('--disable-extensions')
-        # options.add_extension("/home/asher/catscraper/blockerextension.crx")
-        options.add_extension("blockerextension.crx")
+        try:
+            options.add_extension("/home/asher/catscraper/blockerextension.crx")
+        except:
+            options.add_extension("blockerextension.crx")
 
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
