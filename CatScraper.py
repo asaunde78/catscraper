@@ -24,6 +24,8 @@ import time
 class catscraper():
     def __init__(self,offset=0,jump=1,headless=True, slower=False):
         self.slower=slower
+    def __init__(self,offset=0,jump=1,headless=True, slower=False):
+        self.slower=slower
         self.offset = offset
         self.jump = jump
         options = Options()
@@ -32,7 +34,10 @@ class catscraper():
         options.add_argument('lang=en') 
         
         # options.add_argument('--start-maximized') 
+        # options.add_argument('--start-maximized') 
         # options.headless = True
+        if(headless):
+            options.add_argument('--headless=new') 
         if(headless):
             options.add_argument('--headless=new') 
         # options.add_argument('--single-process')
@@ -42,8 +47,10 @@ class catscraper():
         
         options.add_argument('--disable-dev-shm-usage')
         # options.add_argument('--disable-extensions')
-        # options.add_extension("/home/asher/catscraper/blockerextension.crx")
-        options.add_extension("blockerextension.crx")
+        try:
+            options.add_extension("/home/asher/catscraper/blockerextension.crx")
+        except Exception as e:
+            options.add_extension("blockerextension.crx")
 
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
@@ -57,7 +64,7 @@ class catscraper():
         # self.driver = webdriver.Firefox(driver,options=options)
 
         # self.actions = ActionChains(self.driver)
-        self.tries = 1
+        self.tries = 5
         # self.driver.get("https://www.google.com")
         
         # self.driver.get("https://www.google.com/search")
@@ -84,6 +91,7 @@ class catscraper():
         # c = self.driver.get_cookie("count")["value"]
         # print(f"[COOKIE VALUE] {c}")
         
+        # time.sleep((0.4 * (self.offset)))
         # time.sleep((0.4 * (self.offset)))
         url = "https://www.google.com/search"
         #headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36"}
@@ -115,7 +123,7 @@ class catscraper():
             wait.until(EC.presence_of_element_located((By.CLASS_NAME,"bRMDJf")))
         except:
             print("didn't work")
-            return []
+            return [False]
     
         # highest_index = self.offset*self.jump
         highest_index = self.offset#
@@ -128,26 +136,31 @@ class catscraper():
             for nail in thumbnails:
 
                 tries = 0
-                while tries < self.tries:
-                    try:
-                        # print("about to click! so excited")
-                        nail.click()
-                        if self.slower:
-                            time.sleep(1)
-                        
-                        break
-                    except Exception as e:
-                        print(f"[{self.offset}ERROR] failed to click: ", e)
-                        tries +=1
-                        if tries == self.tries:
-                            print("[ERROR] RAN OUT OF TRIES :/")
-                            return [False]
+                # while tries < self.tries:
+                try:
+                    # print("about to click! so excited")
+                    nail.click()
+                    if self.slower:
+                        time.sleep(1)
+                    
+                    # break
+                except Exception as e:
+                    
+                    print(f"[{self.offset}-ERROR] failed to click: ", e)
+                    tries +=1
+                    if tries == self.tries:
+                        print("[ERROR] RAN OUT OF TRIES :/")
+                        return [False]
+                    continue
                 class_name = "f2By0e"
                 # waitstart = time.time()
-                wait = WebDriverWait(self.driver, 15)
-                wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
-
                 count += 1
+                try:
+                    wait = WebDriverWait(self.driver, 3)
+                    wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
+                except:
+                    continue
+                
                 if(len(self.driver.find_elements(By.ID, f"DONE")) > 0):
                     print(f"[{self.offset}DONE] !!! FOUND A DONE")
                     return [True]

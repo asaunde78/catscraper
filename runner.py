@@ -16,23 +16,32 @@ from linkdownloader import downloader
 
 sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
+sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
+
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     
     def __init__(self, workers=1,folder="images",server=False,fixname=False,headless=True,slower=False):
+    def __init__(self, workers=1,folder="images",server=False,fixname=False,headless=True,slower=False):
         #UNCOMMENT THIS FOR LINUX
-        subprocess.run(["pkill", "chrome"])
+        try:
+            subprocess.run(["pkill", "chrome"])
+        except:
+            pass
         self.folder=folder
+        print(f"generating {workers} workers...")
+        self.workers = [catscraper(offset=wnum,jump=workers,headless=headless,slower=slower) for wnum in range(workers)]
         print(f"generating {workers} workers...")
         self.workers = [catscraper(offset=wnum,jump=workers,headless=headless,slower=slower) for wnum in range(workers)]
         self.workercount = len(self.workers)
         # self.downloader = downloader()
         # self.downloader.run(port=6969)
+        self.fixname=fixname
         self.server=server
         #UNCOMMENT THIS FOR DOWNLOAD SERVER 
         if(self.server):
             print("starting downloadserver")
-            self.downloader = downloader(folder=self.folder,fixname=False)
+            self.downloader = downloader(folder=self.folder,fixname=self.fixname)
             self.downloaderprocess = Process(target=self.downloader.run)
             self.downloaderprocess.start()
 
@@ -93,6 +102,7 @@ if __name__ == "__main__":
     # s = scraper(workers=1,server=False,headless=False,slower=True)
     s = scraper(workers=1,server=False,headless=True,slower=False)
     # print(s.genimages("funny monkey",1))
+    s.genimages("broken",1)
     s.genimages("broken",1)
     # time.sleep(2)
     b = time.time()
