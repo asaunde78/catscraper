@@ -6,8 +6,12 @@ import subprocess
 from multiprocessing import Process
 
 import sys,requests
+#LINUX 
 sys.path.insert(1, '/home/asher/linkdownloadersite')
 sys.path.insert(1, '/home/asher/catscraper/blockerextension.crx')
+
+#WINDOWS
+# sys.path.insert(1, '/blockerextension.crx')
 # sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
 from linkdownloader import downloader
@@ -26,7 +30,7 @@ class scraper():
         #UNCOMMENT THIS FOR DOWNLOAD SERVER 
         if(self.server):
             print("starting downloadserver")
-            self.downloader = downloader(folder=self.folder)
+            self.downloader = downloader(folder=self.folder,fixname=False)
             self.downloaderprocess = Process(target=self.downloader.run)
             self.downloaderprocess.start()
 
@@ -84,12 +88,12 @@ class scraper():
         return imagelist
         
 if __name__ == "__main__":
-    s = scraper(workers=2,server=True)
+    s = scraper(workers=2,server=False)
     # print(s.genimages("funny monkey",1))
     s.genimages("funny monkey",1)
     # time.sleep(2)
     b = time.time()
-    workoutputs = s.genimages("pasta",5)
+    workoutputs = s.genimages("funny doggy",10)
     print(workoutputs)
     e = time.time()
     print(f"Took {e-b} seconds to generate and download the images")

@@ -30,9 +30,9 @@ class catscraper():
         # options.binary_location = "/home/asher/catscraper/webdriver/chromedriver"
         options.add_argument('lang=en') 
         
-        # options.add_argument('--start-maximized') 
+        options.add_argument('--start-maximized') 
         # options.headless = True
-        options.add_argument('--headless=new') 
+        # options.add_argument('--headless=new') 
         # options.add_argument('--single-process')
 
         # options.add_argument('--no-sandbox')
@@ -40,7 +40,8 @@ class catscraper():
         
         options.add_argument('--disable-dev-shm-usage')
         # options.add_argument('--disable-extensions')
-        options.add_extension("/home/asher/catscraper/blockerextension.crx")
+        # options.add_extension("/home/asher/catscraper/blockerextension.crx")
+        options.add_extension("blockerextension.crx")
 
         options.add_argument('--disable-infobars')
         options.add_argument('--disable-gpu')
@@ -105,9 +106,6 @@ class catscraper():
         self.driver.get(address)
         print(f"[{self.offset}] got {address} found {self.driver.title}")
         self.driver.add_cookie({"name":"count","value":str(num)})
-        # time.sleep(3)
-        # time.sleep(3)
-        # self.driver.execute_script(f"document.documentElement.appendChild(Object.assign(document.createElement(\"div\"),{{className: desired_count, id:{num}}} ));")
 
         try:
             wait = WebDriverWait(self.driver, 6)
@@ -145,31 +143,16 @@ class catscraper():
                 # waitstart = time.time()
                 wait = WebDriverWait(self.driver, 15)
                 wait.until(EC.presence_of_element_located((By.CLASS_NAME, class_name))) # looking for image holder
-                
-                
 
                 count += 1
                 if(len(self.driver.find_elements(By.ID, f"DONE")) > 0):
                     print(f"[{self.offset}DONE] !!! FOUND A DONE")
                     return [True]
-                # wait = WebDriverWait(self.driver, 15)
-                # wait.until(EC.presence_of_element_located((By.ID, f"link_count{count}")))
-                # print(self.driver.find_element(By.ID, f"link_count{count}"))
-
                 
                 print(f"[IMAGE] {self.offset} got image {count}/{num}")
-                # waitend = time.time()
-                # print(f"\t [WAIT] {self.offset} Waited {waitend-waitstart} seconds")
-                
-                
-                # if (count== num):
-                #     wait = WebDriverWait(self.driver, 9999)
-                #     wait.until(EC.presence_of_element_located((By.ID, f"DONE")))
-                    
+             
                 
                 highest_index += self.jump#*ind
-        # wait = WebDriverWait(self.driver, 7)
-        # wait.until(EC.presence_of_element_located((By.ID, f"link_countdone")))
         return [False]
 
     
