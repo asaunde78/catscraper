@@ -9,16 +9,17 @@ import sys,requests
 #LINUX 
 sys.path.insert(1, '/home/asher/linkdownloadersite')
 sys.path.insert(1, '/home/asher/catscraper/blockerextension.crx')
+from linkdownloader import downloader
 
 #WINDOWS
 # sys.path.insert(1, '/blockerextension.crx')
 # sys.path.insert(1, '/Users/Asher/Downloads/code/linkdownloadersite')
 
-from linkdownloader import downloader
 # subprocess.run(["pkill", "chrome"])
 class scraper():
     
     def __init__(self, workers=1,folder="images",server=False):
+        #UNCOMMENT THIS FOR LINUX
         subprocess.run(["pkill", "chrome"])
         self.folder=folder
         print("generating workers...")
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     s.genimages("funny monkey",1)
     # time.sleep(2)
     b = time.time()
-    workoutputs = s.genimages("funny doggy",10)
+    workoutputs = s.genimages("funny doggy",20)
     print(workoutputs)
     e = time.time()
     print(f"Took {e-b} seconds to generate and download the images")

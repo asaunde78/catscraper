@@ -32,7 +32,7 @@ class catscraper():
         
         options.add_argument('--start-maximized') 
         # options.headless = True
-        # options.add_argument('--headless=new') 
+        options.add_argument('--headless=new') 
         # options.add_argument('--single-process')
 
         # options.add_argument('--no-sandbox')
